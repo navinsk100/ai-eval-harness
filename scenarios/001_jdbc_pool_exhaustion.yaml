@@ -1,0 +1,102 @@
+id: "001_jdbc_pool_exhaustion"
+title: "Connection pool exhaustion masquerading as DB slowness"
+schema_version: 1
+difficulty: medium
+category: ["database", "connection_pool", "jvm"]
+tags: ["spring_boot", "hikaricp", "postgres"]
+severity: high
+
+inputs:
+  test_results:
+    tool: gatling
+    fixture_path: "fixtures/001/gatling_simulation.log"
+    duration_sec: 600
+    target_rps: 1500
+    actual_rps: 1180
+
+  metrics:
+    - source: prometheus
+      fixture_path: "fixtures/001/jvm_metrics.csv"
+      time_window_sec: 600
+
+  logs:
+    - fixture_path: "fixtures/001/app.log"
+      line_count: 4200
+
+  thread_dumps:
+    - fixture_path: "fixtures/001/thread_dump_t300.txt"
+      captured_at_sec: 300
+      thread_count: 247
+      notable_states: ["BLOCKED", "WAITING"]
+
+  slow_queries:
+    fixture_path: "fixtures/001/slow_queries.json"
+
+  context:
+    architecture_notes: |
+      Spring Boot 3 orders service backed by Postgres 15. Uses HikariCP for
+      connection pooling. Called from an upstream API gateway under heavy
+      Black Friday traffic.
+    deployment: "k8s, 4 pods, 2 vCPU + 4 GB heap each"
+    jvm_args: "-Xms2g -Xmx4g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
+ground_truth:
+  primary_root_cause:
+    summary: |
+      HikariCP connection pool exhaustion (max=50) caused thread blocking on
+      connection acquisition. Latency degradation masks the upstream root issue
+      of slow OrderRepository queries (N+1 pattern).
+    component: "jdbc_pool"
+    confidence_floor: 0.75
+    evidence_required:
+      - source: "metrics"
+        signal: "hikaricp.connections.usage saturated at 50 from t=180s onward"
+        criticality: required
+      - source: "thread_dump"
+        signal: "20+ threads waiting on HikariPool.getConnection"
+        criticality: required
+      - source: "metrics"
+        signal: "p99 latency spike correlates with pool saturation timing, not with GC"
+        criticality: strong
+
+  contributing_factors:
+    - summary: |
+        OrderRepository.findByCustomerWithItems averages 850ms per call with
+        14 calls per HTTP request — classic Hibernate N+1 pattern that holds
+        connections longer than necessary and accelerates pool saturation.
+      criticality: strong
+    - summary: "Connection acquire timeout of 30s masks failure as latency rather than fast-fail."
+      criticality: supporting
+
+  red_herrings:
+    - description: "G1 young GC count increased during the test"
+      why_not_cause: "GC pause times stayed under 40ms; total GC time <2% of wall clock. GC was responding to throughput, not causing it."
+    - description: "CPU usage at 78%"
+      why_not_cause: "Threads were blocked on I/O wait, not CPU-bound. CPU saturation would show RUNNABLE threads."
+
+  required_recommendations:
+    - "increase HikariCP maximum-pool-size from 50 to 100"
+    - "investigate slow OrderRepository queries"
+
+  forbidden_claims:
+    - "GC pause is the primary cause"
+    - "garbage collection is the primary cause"
+    - "increase JVM heap size"
+    - "CPU saturation is the primary cause"
+
+  expected_signals_in_diagnosis:
+    - "connection pool"
+    - "HikariCP"
+    - "saturation"
+    - "N+1"
+
+  unexpected_signals_warning:
+    - "memory leak"
+    - "heap size"
+
+grading:
+  weight: 1.0
+  notes: |
+    Classic case where the surface symptom (DB slowness) hides the real cause
+    (pool sizing) and the deeper cause (N+1 query). Strong test of whether the
+    agent looks past the obvious GC and CPU red herrings.

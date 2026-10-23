@@ -1,0 +1,90 @@
+# Scenario schema reference.
+#
+# This is a human-readable spec, not a runnable scenario. Use it as a template
+# when authoring new scenarios. The authoritative schema is in
+# perf_eval/schema.py — Pydantic will validate every scenario file at load time.
+#
+# Convention: filename is `<id>.yaml` matching the `id:` field below.
+
+id: "000_template"                    # snake_case, prefixed with 3-digit number
+title: "Short one-line description"
+schema_version: 1
+difficulty: medium                    # easy | medium | hard
+category: ["jvm", "database"]         # free-form tags for grouping
+tags: ["spring_boot", "hikaricp"]     # free-form for filtering
+severity: medium                      # low | medium | high — for production stakes
+
+# =========================================================================
+# AGENT-VISIBLE BLOCK — everything below is what the agent sees
+# =========================================================================
+inputs:
+  test_results:
+    tool: gatling                     # gatling | k6 | jmeter | blazemeter
+    fixture_path: "fixtures/000/gatling_simulation.log"
+    duration_sec: 600
+    target_rps: 1500
+    actual_rps: 1180
+
+  metrics:
+    - source: prometheus              # prometheus | otel | datadog | csv
+      fixture_path: "fixtures/000/jvm_metrics.csv"
+      time_window_sec: 600
+
+  logs:
+    - fixture_path: "fixtures/000/app.log"
+      line_count: 4200
+
+  thread_dumps:
+    - fixture_path: "fixtures/000/thread_dump_t300.txt"
+      captured_at_sec: 300
+      thread_count: 247
+      notable_states: ["BLOCKED", "WAITING"]
+
+  heap_dumps: []                      # list of HeapDump objects
+  flame_graphs: []                    # list of FlameGraph objects
+  slow_queries:
+    fixture_path: "fixtures/000/slow_queries.json"
+
+  context:
+    architecture_notes: "Brief 2-3 sentence description of the system."
+    deployment: "k8s, 4 pods, 2 vCPU + 4 GB heap each"
+    jvm_args: "-Xms2g -Xmx4g -XX:+UseG1GC"
+
+# =========================================================================
+# GRADER-ONLY BLOCK — never goes to the agent
+# =========================================================================
+ground_truth:
+  primary_root_cause:
+    summary: "One sentence describing the actual root cause."
+    component: "jdbc_pool"            # jdbc_pool | gc | thread_pool | network | etc
+    confidence_floor: 0.7             # min confidence a strong agent should show
+    evidence_required:
+      - source: "metrics"
+        signal: "specific signal text that the agent should cite"
+        criticality: required         # required | strong | supporting
+
+  contributing_factors:
+    - summary: "Secondary issue that should ideally also be flagged."
+      criticality: strong
+
+  red_herrings:
+    - description: "Misleading signal in the data."
+      why_not_cause: "Why this isn't the real cause."
+
+  required_recommendations:
+    - "increase HikariCP maximum-pool-size"
+    - "investigate slow OrderRepository queries"
+
+  forbidden_claims:
+    - "GC pause is the primary cause"
+
+  expected_signals_in_diagnosis:
+    - "connection pool"
+    - "HikariCP"
+
+  unexpected_signals_warning:
+    - "memory leak"
+
+grading:
+  weight: 1.0
+  notes: "Optional grader hints — what makes this scenario interesting."

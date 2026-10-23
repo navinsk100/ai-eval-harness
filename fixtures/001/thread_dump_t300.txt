@@ -1,0 +1,49 @@
+2025-02-03 15:52:00
+Full thread dump OpenJDK 64-Bit Server VM (21.0.2+13 mixed mode):
+
+"http-nio-8080-exec-23" #67 daemon prio=5 os_prio=0 tid=0x00007f8a2c0e8000 nid=0x4321 waiting on condition [0x00007f8a08bff000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d4321abc> (a java.util.concurrent.SynchronousQueue$TransferStack)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
+        at java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:460)
+        at java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:941)
+        at com.zaxxer.hikari.util.ConcurrentBag.borrow(ConcurrentBag.java:140)
+        at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:182)
+        at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:148)
+        at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+        at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:158)
+        at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:116)
+        at com.example.orders.OrderRepository.findByCustomerWithItems(OrderRepository.java:84)
+        at com.example.orders.OrderController.getOrder(OrderController.java:42)
+
+"http-nio-8080-exec-24" #68 daemon prio=5 os_prio=0 tid=0x00007f8a2c0e8800 nid=0x4322 waiting on condition [0x00007f8a08aff000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:194)
+        at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:182)
+        at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+        at com.example.orders.OrderRepository.findByCustomerWithItems(OrderRepository.java:84)
+        at com.example.orders.OrderController.getOrder(OrderController.java:42)
+
+"http-nio-8080-exec-25" #69 daemon prio=5 os_prio=0 tid=0x00007f8a2c0e9000 nid=0x4323 waiting on condition [0x00007f8a089ff000]
+   java.lang.Thread.State: WAITING (parking)
+        at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:182)
+        at com.example.orders.OrderRepository.findByCustomerWithItems(OrderRepository.java:84)
+
+# ... 20+ more http-nio-* threads in WAITING state on HikariPool.getConnection ...
+
+"http-nio-8080-exec-50" #94 daemon prio=5 os_prio=0 tid=0x00007f8a2c0f8000 nid=0x4334 runnable [0x00007f8a08000000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.SocketInputStream.socketRead0(Native Method)
+        at java.net.SocketInputStream.read(SocketInputStream.java:171)
+        at org.postgresql.core.PGStream.read(PGStream.java:474)
+        at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2154)
+        at com.example.orders.OrderRepository.findByCustomerWithItems(OrderRepository.java:91)
+
+# Summary:
+# Total threads: 247
+# RUNNABLE: 12 (most in PG socket read)
+# WAITING: 23 (all in HikariPool.getConnection)
+# TIMED_WAITING: 187 (most in scheduled executors, healthy)
+# BLOCKED: 8 (synchronized blocks, mostly inside Hibernate session factory)

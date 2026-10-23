@@ -1,0 +1,59 @@
+timestamp,metric,labels,value
+1738544820,jvm_memory_used_bytes,area=heap,1.8e9
+1738544820,jvm_memory_max_bytes,area=heap,4.0e9
+1738544820,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.024
+1738544820,hikaricp_connections_active,pool=primary,12
+1738544820,hikaricp_connections_idle,pool=primary,38
+1738544820,hikaricp_connections_pending,pool=primary,0
+1738544820,hikaricp_connections_acquire_seconds_p99,pool=primary,0.012
+1738544820,process_cpu_usage,,0.42
+1738544820,http_server_requests_seconds_p99,method=GET status=200,0.221
+1738544880,jvm_memory_used_bytes,area=heap,2.1e9
+1738544880,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.028
+1738544880,hikaricp_connections_active,pool=primary,28
+1738544880,hikaricp_connections_idle,pool=primary,22
+1738544880,hikaricp_connections_pending,pool=primary,0
+1738544880,hikaricp_connections_acquire_seconds_p99,pool=primary,0.018
+1738544880,process_cpu_usage,,0.58
+1738544880,http_server_requests_seconds_p99,method=GET status=200,0.234
+1738544940,jvm_memory_used_bytes,area=heap,2.4e9
+1738544940,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.031
+1738544940,hikaricp_connections_active,pool=primary,42
+1738544940,hikaricp_connections_idle,pool=primary,8
+1738544940,hikaricp_connections_pending,pool=primary,0
+1738544940,hikaricp_connections_acquire_seconds_p99,pool=primary,0.087
+1738544940,process_cpu_usage,,0.71
+1738544940,http_server_requests_seconds_p99,method=GET status=200,0.412
+1738545000,jvm_memory_used_bytes,area=heap,2.6e9
+1738545000,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.034
+1738545000,hikaricp_connections_active,pool=primary,50
+1738545000,hikaricp_connections_idle,pool=primary,0
+1738545000,hikaricp_connections_pending,pool=primary,12
+1738545000,hikaricp_connections_acquire_seconds_p99,pool=primary,2.41
+1738545000,process_cpu_usage,,0.76
+1738545000,http_server_requests_seconds_p99,method=GET status=200,1.832
+1738545060,jvm_memory_used_bytes,area=heap,2.7e9
+1738545060,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.036
+1738545060,hikaricp_connections_active,pool=primary,50
+1738545060,hikaricp_connections_idle,pool=primary,0
+1738545060,hikaricp_connections_pending,pool=primary,38
+1738545060,hikaricp_connections_acquire_seconds_p99,pool=primary,14.2
+1738545060,process_cpu_usage,,0.78
+1738545060,http_server_requests_seconds_p99,method=GET status=200,4.821
+1738545120,jvm_memory_used_bytes,area=heap,2.8e9
+1738545120,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.038
+1738545120,hikaricp_connections_active,pool=primary,50
+1738545120,hikaricp_connections_idle,pool=primary,0
+1738545120,hikaricp_connections_pending,pool=primary,47
+1738545120,hikaricp_connections_acquire_seconds_p99,pool=primary,28.4
+1738545120,process_cpu_usage,,0.78
+1738545120,http_server_requests_seconds_p99,method=GET status=200,11.234
+# ... continues at saturation through t=600s ...
+1738545420,jvm_memory_used_bytes,area=heap,2.9e9
+1738545420,jvm_gc_pause_seconds_max,action=end_of_minor_GC,0.039
+1738545420,hikaricp_connections_active,pool=primary,50
+1738545420,hikaricp_connections_idle,pool=primary,0
+1738545420,hikaricp_connections_pending,pool=primary,52
+1738545420,hikaricp_connections_acquire_seconds_p99,pool=primary,29.8
+1738545420,process_cpu_usage,,0.78
+1738545420,http_server_requests_seconds_p99,method=GET status=200,14.012

@@ -1,0 +1,27 @@
+[
+  {
+    "query_id": "OrderRepository.findByCustomerWithItems",
+    "query_text": "SELECT * FROM orders WHERE customer_id = ?",
+    "calls_per_request": 1,
+    "avg_duration_ms": 12,
+    "p99_duration_ms": 28,
+    "samples": 187423
+  },
+  {
+    "query_id": "OrderRepository.findByCustomerWithItems_subquery",
+    "query_text": "SELECT * FROM order_items WHERE order_id = ?",
+    "calls_per_request": 14,
+    "avg_duration_ms": 847,
+    "p99_duration_ms": 2100,
+    "samples": 2623922,
+    "notes": "Called once per order_item row — classic N+1 pattern. Total wall time per HTTP request: ~14 * 847ms = 11.9s of DB time."
+  },
+  {
+    "query_id": "OrderRepository.countByCustomerId",
+    "query_text": "SELECT count(*) FROM orders WHERE customer_id = ?",
+    "calls_per_request": 1,
+    "avg_duration_ms": 8,
+    "p99_duration_ms": 18,
+    "samples": 187423
+  }
+]

@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Run artifacts — keep the directory but ignore contents
+runs/*
+!runs/.gitkeep
+
+# Local SQLite history (recreated by harness)
+runs/history.sqlite

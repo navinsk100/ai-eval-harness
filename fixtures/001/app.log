@@ -1,0 +1,19 @@
+2025-02-03 15:47:00.123 INFO  [http-nio-8080-exec-12] OrderController : GET /orders/4821 START
+2025-02-03 15:47:00.205 INFO  [http-nio-8080-exec-12] OrderController : GET /orders/4821 OK 82ms
+2025-02-03 15:47:00.231 INFO  [http-nio-8080-exec-15] OrderController : GET /orders/4822 START
+2025-02-03 15:47:00.318 INFO  [http-nio-8080-exec-15] OrderController : GET /orders/4822 OK 87ms
+# ... healthy traffic for ~3 minutes ...
+2025-02-03 15:50:01.892 INFO  [http-nio-8080-exec-23] OrderController : GET /orders/9874 OK 892ms
+2025-02-03 15:50:02.104 INFO  [http-nio-8080-exec-24] OrderController : GET /orders/9875 OK 1102ms
+2025-02-03 15:50:02.389 INFO  [http-nio-8080-exec-25] OrderController : GET /orders/9876 OK 1389ms
+# Latency climbing past t=180s
+2025-02-03 15:51:01.045 ERROR [http-nio-8080-exec-31] HikariPool        : HikariPool-1 - Connection is not available, request timed out after 30000ms.
+2025-02-03 15:51:01.123 ERROR [http-nio-8080-exec-32] HikariPool        : HikariPool-1 - Connection is not available, request timed out after 30000ms.
+2025-02-03 15:51:01.210 ERROR [http-nio-8080-exec-33] HikariPool        : HikariPool-1 - Connection is not available, request timed out after 30000ms.
+2025-02-03 15:51:01.298 ERROR [http-nio-8080-exec-34] HikariPool        : HikariPool-1 - Connection is not available, request timed out after 30000ms.
+2025-02-03 15:51:01.412 WARN  [HikariPool-1 housekeeper] HikariPool : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=12s)
+2025-02-03 15:51:02.103 ERROR [http-nio-8080-exec-35] OrderController : GET /orders/12482 ERROR java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+# ... many more identical timeout errors throughout the rest of the test ...
+2025-02-03 15:55:00.000 INFO  [scheduling-1] PoolStats   : pool=primary active=50 idle=0 waiting=47
+2025-02-03 15:56:00.000 INFO  [scheduling-1] PoolStats   : pool=primary active=50 idle=0 waiting=52
+2025-02-03 15:57:00.000 INFO  [scheduling-1] PoolStats   : pool=primary active=50 idle=0 waiting=49

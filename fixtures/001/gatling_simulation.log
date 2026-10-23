@@ -1,0 +1,41 @@
+# Gatling simulation.log excerpt
+# Format: REQUEST <id> <start_ms> <end_ms> <status> <error>
+#
+# This is a synthetic, truncated example for harness wiring.
+# Replace with a real Gatling output from your reference app.
+
+RUN start 1738544821000
+REQUEST 1 1738544821123 1738544821205 OK
+REQUEST 2 1738544821124 1738544821210 OK
+REQUEST 3 1738544821125 1738544821218 OK
+REQUEST 4 1738544821127 1738544821225 OK
+# ... ~3 minutes of healthy traffic at ~1500 RPS, p99 around 220ms ...
+
+# At t=180s, response times begin climbing
+REQUEST 270000 1738545001000 1738545001892 OK
+REQUEST 270001 1738545001002 1738545002104 OK
+REQUEST 270002 1738545001005 1738545002389 OK
+# ...
+
+# At t=240s, first connection timeout failures appear
+REQUEST 360001 1738545061000 1738545091045 KO i.g.h.c.i.RequestTimeoutException
+REQUEST 360002 1738545061102 1738545091210 KO i.g.h.c.i.RequestTimeoutException
+
+# At t=300s, p99 = ~14 seconds, many KO failures
+REQUEST 450000 1738545121000 1738545135102 OK
+REQUEST 450001 1738545121005 1738545151008 KO java.net.SocketTimeoutException
+
+# Summary stats from Gatling report:
+# ---- Global Information ----
+# > request count                                       887000 (OK=712000  KO=175000)
+# > min response time                                       82
+# > max response time                                    30001
+# > mean response time                                    1840
+# > std deviation                                         4920
+# > response time 50th percentile                          112
+# > response time 75th percentile                          840
+# > response time 95th percentile                         8200
+# > response time 99th percentile                        14200
+# > mean requests/sec                                     1180
+
+RUN end 1738545421000
