@@ -1,4 +1,4 @@
-# perf-eval
+# AI EVAL HARNESS 
 
 An evaluation harness for an AI-driven performance analysis agent. Grades the
 agent against curated scenarios of realistic load testing + JVM + observability
