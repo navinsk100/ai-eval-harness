@@ -65,3 +65,34 @@ Start dumb, measure, then add complexity:
 2. Week 2-3: Iterate the prompt, add a few-shot examples block.
 3. Week 4+: Add RAG over a curated performance engineering knowledge base.
 4. Month 2+: Move to tool-use loop (V1 agent), expand scenarios to 50+.
+
+## Design decisions
+
+### Why eval harnesses, not just better prompts
+Prompt quality drifts as models update and scenarios diversify. Without an
+eval harness, teams iterate on vibes. This project treats the agent as the
+*thing under test* and tracks its quality via a reproducible, versioned
+scoring loop.
+
+### Type-level separation of agent inputs and ground truth
+Scenarios contain both the evidence (what the agent sees) and the ground
+truth (what the grader compares against). To prevent eval contamination,
+the agent receives an `AgentInput` type that structurally excludes the
+`ground_truth` field — enforced by Pydantic, not by developer discipline.
+
+### Deterministic graders + LLM-as-judge, weighted together
+Format compliance, citation presence, and forbidden-claim detection are
+cheap deterministic checks. Root-cause correctness and reasoning quality
+need semantic understanding, so Claude grades those. Each criterion carries
+a weight reflecting its importance to the product value proposition.
+
+### Confidently-wrong is weighted hardest
+A confident wrong diagnosis is worse than a tentative one. The grader
+reflects that: forbidden-claim weight is 2.0 (vs 0.5 for format), and the
+LLM judge caps confidently-wrong scores at 0.2.
+
+### Fixtures live on disk, not inline
+Scenarios reference evidence files by path. The V0 agent inlines them into
+one prompt; the planned V1 agent uses MCP-style tool calls to fetch evidence
+on demand. Same scenarios, same ground truth — only the agent's data access
+pattern changes.
